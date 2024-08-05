@@ -1,0 +1,59 @@
+# Generate an SSH key pair locally
+
+resource "tls_private_key" "example" {
+
+  algorithm = "RSA"
+
+  rsa_bits   = 4096
+
+}
+
+ 
+
+# Save the private key to a local file
+
+resource "local_file" "private_key" {
+
+  content  = tls_private_key.example.private_key_pem
+
+  filename = "C:/Users/SLAVISHE/DEVOPS_PRRACTICAL/id_rsa"     #Add Local File Path of PPK
+
+}
+
+ 
+
+# Save the public key to a local file
+
+resource "local_file" "public_key" {
+
+  content  = tls_private_key.example.public_key_openssh
+
+  filename = "C:/Users/SLAVISHE/DEVOPS_PRRACTICAL/id_rsa.pub"  #Add Local File Path of PPK
+
+}
+
+ 
+
+# Create the AWS key pair with the public key
+
+resource "aws_key_pair" "example" {
+
+  key_name   = "example_key"
+
+  public_key = local_file.public_key.content
+
+}
+
+ 
+
+output "private_key_path" {
+
+  value = local_file.private_key.filename
+
+}
+
+ 
+
+output "public_key_path" {
+
+  value = local_file.public_key.filename
